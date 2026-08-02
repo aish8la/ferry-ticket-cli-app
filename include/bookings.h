@@ -16,4 +16,12 @@ typedef struct {
   int status; /* BOOKING_STATUS_ACTIVE or BOOKING_STATUS_CANCELLED */
 } Booking;
 
+// struct to store dynamic array data and next id for booking structs
+typedef struct {
+  Booking *bookings;
+  int count;
+  int capacity;
+  int next_booking_id;
+} BookingList;
+
 #endif // !BOOKINGS_H

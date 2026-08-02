@@ -16,4 +16,11 @@ typedef struct {
   int available_seats;
 } FerryRoute;
 
+// struct to store info on dynamic array for ferry route structs
+typedef struct {
+  FerryRoute *routes;
+  int count;
+  int capacity;
+} RouteList;
+
 #endif // !ROUTES_H
