@@ -23,6 +23,15 @@ typedef struct {
   int capacity;
 } RouteList;
 
+typedef enum {
+  ROUTE_OK = 0,
+  ROUTE_ERR_DUPLICATE_ID,
+  ROUTE_ERR_INVALID_INPUT,
+  ROUTE_ERR_NOT_FOUND,
+  ROUTE_ERR_HAS_ACTIVE_BOOKINGS,
+  ROUTE_ERR_ALLOC
+} route_error_t;
+
 int add_route(RouteList *list, int route_id, const char *departure_island,
               const char *destination_island, const char *departure_date,
               const char *departure_time, double price, int max_capacity);
