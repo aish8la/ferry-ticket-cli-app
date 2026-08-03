@@ -23,4 +23,8 @@ typedef struct {
   int capacity;
 } RouteList;
 
+int add_route(RouteList *list, int route_id, const char *departure_island,
+              const char *destination_island, const char *departure_date,
+              const char *departure_time, double price, int max_capacity);
+
 #endif // !ROUTES_H

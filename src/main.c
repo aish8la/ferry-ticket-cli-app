@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "bookings.h"
 #include "routes.h"
@@ -8,12 +9,18 @@
 /* ================== admin function =============== */
 
 static void admin_mode(RouteList *routes, BookingList *bookings);
+static void admin_add_route(RouteList *routes, BookingList *bookings);
 
 /* ================= passenger functions ============= */
 
 static void passenger_mode(RouteList *routes, BookingList *bookings);
 
+/* =================== main ===================== */
 int main(void) {
+
+  RouteList routes = {
+      .routes = malloc(sizeof(FerryRoute) * 10), .count = 0, .capacity = 10};
+  BookingList bookings;
   int choice;
 
   printf("Ferry Ticket Booking & Management System\n");
@@ -26,7 +33,7 @@ int main(void) {
 
     switch (choice) {
     case 1:
-      printf("admin");
+      admin_mode(&routes, &bookings);
       break;
     case 2:
       printf("passenger");
@@ -59,42 +66,83 @@ static void admin_mode(RouteList *routes, BookingList *bookings) {
     printf("7. View all passenger bookings\n");
     printf("8. View booking summary\n");
     printf("9. Return to main menu\n");
-  }
 
-  printf("select option:");
-  scanf("%d", &choice);
+    printf("select option:");
+    scanf("%d", &choice);
 
-  switch (choice) {
-  case 1:
-    // add route
-    break;
-  case 2:
-    // update route
-    break;
-  case 3:
-    // remove rout
-    break;
-  case 4:
-    // view all routes
-    break;
-  case 5:
-    // search route
-    break;
-  case 6:
-    // sort routes
-    break;
-  case 7:
-    // view all bookings
-    break;
-  case 8:
-    // summary
-    break;
-  case 9:
-    return;
-  default:
-    printf("Invalid choice. Please try again.\n");
-    break;
+    switch (choice) {
+    case 1:
+      admin_add_route(routes, bookings);
+      break;
+    case 2:
+      // update route
+      break;
+    case 3:
+      // remove rout
+      break;
+    case 4:
+      // view all routes
+      break;
+    case 5:
+      // search route
+      break;
+    case 6:
+      // sort routes
+      break;
+    case 7:
+      // view all bookings
+      break;
+    case 8:
+      // summary
+      break;
+    case 9:
+      return;
+    default:
+      printf("Invalid choice. Please try again.\n");
+      break;
+    }
   }
+}
+
+static void admin_add_route(RouteList *routes, BookingList *bookings) {
+  int route_id;
+  char departure[ROUTE_STR_LEN];
+  char destination[ROUTE_STR_LEN];
+  char date[ROUTE_STR_LEN];
+  char time_str[ROUTE_STR_LEN];
+  double price;
+  int capacity;
+  int result;
+
+  printf("Route ID: ");
+  scanf("%d", &route_id);
+  // remove newline preventing below fgets from immediately returning
+  getchar();
+
+  printf("Departure island: ");
+  fgets(departure, sizeof(departure), stdin);
+
+  printf("Destination island: ");
+  fgets(destination, sizeof(destination), stdin);
+
+  printf("Departure date: ");
+  fgets(date, sizeof(date), stdin);
+
+  printf("Departure time: ");
+  fgets(time_str, sizeof(time_str), stdin);
+
+  printf("Ticket price: ");
+  scanf("%lf", &price);
+
+  printf("Maximum seat capacity: ");
+  scanf("%d", &capacity);
+
+  result = add_route(routes, route_id, departure, destination, date, time_str,
+                     price, capacity);
+  if (result == 0) {
+    printf("route added");
+  }
+  return;
 }
 
 /* ----------------- passender mode -------------- */
