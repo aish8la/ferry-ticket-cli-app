@@ -26,5 +26,5 @@ int add_route(RouteList *list, int route_id, const char *departure_island,
 
   list->routes[list->count] = new_route;
   list->count++;
-  return 0;
+  return ROUTE_OK;
 }
