@@ -95,3 +95,7 @@ int is_non_empty(const char *str) {
   // returns 0 falsey when it's only whitespaces or empty
   return 0;
 }
+
+int is_positive_int(int value) { return value > 0; }
+
+int is_positive_double(double value) { return value > 0.0; }
