@@ -35,5 +35,7 @@ typedef enum {
 int add_route(RouteList *list, int route_id, const char *departure_island,
               const char *destination_island, const char *departure_date,
               const char *departure_time, double price, int max_capacity);
+int search_route_by_id(const RouteList *list, int route_id);
+int route_id_exists(const RouteList *list, int route_id);
 
 #endif // !ROUTES_H

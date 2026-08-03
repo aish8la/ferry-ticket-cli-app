@@ -28,3 +28,25 @@ int add_route(RouteList *list, int route_id, const char *departure_island,
   list->count++;
   return ROUTE_OK;
 }
+
+int search_route_by_id(const RouteList *list, int route_id) {
+  int i;
+
+  // return -1 if null pointer
+  if (list == NULL) {
+    return -1;
+  }
+
+  // searches the routes array by route_id and return the index of the element
+  for (i = 0; i < list->count; i++) {
+    if (list->routes[i].route_id == route_id) {
+      return i;
+    }
+  }
+  // returns -1 if not found
+  return -1;
+}
+
+int route_id_exists(const RouteList *list, int route_id) {
+  return search_route_by_id(list, route_id) != -1;
+}
