@@ -3,6 +3,7 @@
 
 #include "bookings.h"
 #include "routes.h"
+#include "utilities.h"
 
 /* ----------------- function prototypes --------------- */
 
@@ -28,8 +29,9 @@ int main(void) {
   while (1) {
     printf("\n1. Admin Mode\n2. Passenger Mode\n3. Exit\n");
 
-    printf("Choice: ");
-    scanf("%d", &choice);
+    if (!prompt_int("Choice: ", &choice)) {
+      break;
+    }
 
     switch (choice) {
     case 1:
@@ -67,8 +69,9 @@ static void admin_mode(RouteList *routes, BookingList *bookings) {
     printf("8. View booking summary\n");
     printf("9. Return to main menu\n");
 
-    printf("select option:");
-    scanf("%d", &choice);
+    if (!prompt_int("Choice: ", &choice)) {
+      return;
+    }
 
     switch (choice) {
     case 1:
@@ -114,34 +117,32 @@ static void admin_add_route(RouteList *routes, BookingList *bookings) {
   int capacity;
   int result;
 
-  printf("Route ID: ");
-  scanf("%d", &route_id);
-  // remove newline preventing below fgets from immediately returning
-  getchar();
-
-  printf("Departure island: ");
-  fgets(departure, sizeof(departure), stdin);
-
-  printf("Destination island: ");
-  fgets(destination, sizeof(destination), stdin);
-
-  printf("Departure date: ");
-  fgets(date, sizeof(date), stdin);
-
-  printf("Departure time: ");
-  fgets(time_str, sizeof(time_str), stdin);
-
-  printf("Ticket price: ");
-  scanf("%lf", &price);
-
-  printf("Maximum seat capacity: ");
-  scanf("%d", &capacity);
+  if (!prompt_int("Route ID: ", &route_id)) {
+    return;
+  }
+  if (!prompt_string("Departure island: ", departure, sizeof(departure))) {
+    return;
+  }
+  if (!prompt_nonempty_string("Destination island: ", destination,
+                              sizeof(destination))) {
+    return;
+  }
+  if (!prompt_string("Departure date: ", date, sizeof(date))) {
+    return;
+  }
+  if (!prompt_string("Departure time: ", time_str, sizeof(time_str))) {
+    return;
+  }
+  if (!prompt_double("Ticket price: ", &price)) {
+    return;
+  }
+  if (!prompt_int("Maximum seat capacity: ", &capacity)) {
+    return;
+  }
 
   result = add_route(routes, route_id, departure, destination, date, time_str,
                      price, capacity);
-  if (result == 0) {
-    printf("route added");
-  }
+
   return;
 }
 
@@ -159,8 +160,9 @@ static void passenger_mode(RouteList *routes, BookingList *bookings) {
     printf("6. Cancel a booking\n");
     printf("7. Return to main menu\n");
 
-    printf("select option:");
-    scanf("%d", &choice);
+    if (!prompt_int("Choice: ", &choice)) {
+      return;
+    }
 
     switch (choice) {
     case 1:
