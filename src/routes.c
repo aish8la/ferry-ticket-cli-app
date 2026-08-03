@@ -7,10 +7,16 @@ int add_route(RouteList *list, int route_id, const char *departure_island,
               const char *departure_time, double price, int max_capacity) {
   FerryRoute new_route;
 
+  // checks for empty strings and negative values
   if (list == NULL || !is_non_empty(destination_island) ||
       !is_non_empty(departure_island) || !is_positive_double(price) ||
       !is_positive_int(max_capacity)) {
     return ROUTE_ERR_INVALID_INPUT;
+  }
+
+  // checks and returns error if route exists
+  if (route_id_exists(list, route_id)) {
+    return ROUTE_ERR_DUPLICATE_ID;
   }
 
   new_route.route_id = route_id;
