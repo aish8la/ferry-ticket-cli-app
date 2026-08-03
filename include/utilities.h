@@ -11,5 +11,7 @@ int read_line(char *buf, size_t size);
 void trim_newline(char *str);
 int prompt_int(const char *prompt, int *out);
 int prompt_string(const char *prompt, char *out, size_t size);
+int prompt_double(const char *prompt, double *out);
+int prompt_nonempty_string(const char *prompt, char *out, size_t size);
 
 #endif // !UTILITIES_H

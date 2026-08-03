@@ -76,3 +76,31 @@ int prompt_string(const char *prompt, char *out, size_t size) {
   printf("%s", prompt);
   return read_line(out, size);
 }
+
+int prompt_double(const char *prompt, double *out) {
+  char buf[LINE_BUF_SIZE];
+
+  while (1) {
+    printf("%s", prompt);
+    if (!read_line(buf, sizeof(buf))) {
+      return 0;
+    }
+    if (parse_double(buf, out)) {
+      return 1;
+    }
+    printf("Invalid number. Please try again.\n");
+  }
+}
+
+int prompt_nonempty_string(const char *prompt, char *out, size_t size) {
+  while (1) {
+    printf("%s", prompt);
+    if (!read_line(out, size)) {
+      return 0;
+    }
+    if (is_non_empty(out)) {
+      return 1;
+    }
+    printf("This field cannot be empty. Please try again.\n");
+  }
+}
