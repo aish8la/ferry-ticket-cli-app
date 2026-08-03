@@ -11,7 +11,11 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
 set(SOURCES
-  src/main.c)
+  src/main.c
+  src/bookings.c
+  src/routes.c
+  src/utilities.c
+)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
