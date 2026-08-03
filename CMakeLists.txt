@@ -16,6 +16,7 @@ set(SOURCES
   src/routes.c
   src/utilities.c
   src/validation.c
+  src/files.c
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
