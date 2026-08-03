@@ -3,6 +3,8 @@
 
 // length of route related strings
 #define ROUTE_STR_LEN 64
+// initial capacity of route array
+#define ROUTE_INITIAL_CAPACITY 4
 
 // struct for route data
 typedef struct {
@@ -37,5 +39,6 @@ int add_route(RouteList *list, int route_id, const char *departure_island,
               const char *departure_time, double price, int max_capacity);
 int search_route_by_id(const RouteList *list, int route_id);
 int route_id_exists(const RouteList *list, int route_id);
+int route_list_append(RouteList *list, const FerryRoute *route);
 
 #endif // !ROUTES_H

@@ -1,6 +1,7 @@
 #include "routes.h"
 #include "utilities.h"
 #include "validation.h"
+#include <stdlib.h>
 
 int add_route(RouteList *list, int route_id, const char *departure_island,
               const char *destination_island, const char *departure_date,
@@ -55,4 +56,46 @@ int search_route_by_id(const RouteList *list, int route_id) {
 
 int route_id_exists(const RouteList *list, int route_id) {
   return search_route_by_id(list, route_id) != -1;
+}
+
+static int ensure_capacity(RouteList *list) {
+  int new_capacity;
+  FerryRoute *new_routes;
+
+  // check if current number of records is less than the capacity of the array
+  // and returns 1 true
+  if (list->count < list->capacity) {
+    return 1;
+  }
+
+  // check if current capacity is 0 and initialize capacity if so. if not then
+  // double the capacity
+  new_capacity =
+      (list->capacity == 0) ? ROUTE_INITIAL_CAPACITY : list->capacity * 2;
+
+  // reallocate memory to fit the new capacity
+  new_routes = (FerryRoute *)realloc(list->routes,
+                                     (size_t)new_capacity * sizeof(FerryRoute));
+  // if realloc fails then return 0 falsy
+  if (new_routes == NULL) {
+    return 0;
+  }
+
+  list->routes = new_routes;
+  list->capacity = new_capacity;
+  return 1;
+}
+
+int route_list_append(RouteList *list, const FerryRoute *route) {
+  if (list == NULL || route == NULL) {
+    return ROUTE_ERR_INVALID_INPUT;
+  }
+  // ensures that there is enough capacity to append new data
+  if (!ensure_capacity(list)) {
+    return ROUTE_ERR_ALLOC;
+  }
+  // dreferences and appends route data to the next empty slot in the array
+  list->routes[list->count] = *route;
+  list->count++;
+  return ROUTE_OK;
 }
