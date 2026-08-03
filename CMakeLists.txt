@@ -15,6 +15,7 @@ set(SOURCES
   src/bookings.c
   src/routes.c
   src/utilities.c
+  src/validation.c
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
