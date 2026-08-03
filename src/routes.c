@@ -1,5 +1,5 @@
 #include "routes.h"
-#include <string.h>
+#include "utilities.h"
 
 int add_route(RouteList *list, int route_id, const char *departure_island,
               const char *destination_island, const char *departure_date,
@@ -7,13 +7,12 @@ int add_route(RouteList *list, int route_id, const char *departure_island,
   FerryRoute new_route;
 
   new_route.route_id = route_id;
-  strncpy(new_route.departure_island, destination_island, ROUTE_STR_LEN - 1);
-  strncpy(new_route.departure_island, departure_island, ROUTE_STR_LEN - 1);
-  strncpy(new_route.destination_island, destination_island, ROUTE_STR_LEN - 1);
-  strncpy(new_route.departure_date,
-          departure_date != NULL ? departure_date : "", ROUTE_STR_LEN - 1);
-  strncpy(new_route.departure_time,
-          departure_time != NULL ? departure_time : "", ROUTE_STR_LEN - 1);
+  copy_str(new_route.departure_island, departure_island, ROUTE_STR_LEN);
+  copy_str(new_route.destination_island, destination_island, ROUTE_STR_LEN);
+  copy_str(new_route.departure_date,
+           departure_date != NULL ? departure_date : "", ROUTE_STR_LEN);
+  copy_str(new_route.departure_time,
+           departure_time != NULL ? departure_time : "", ROUTE_STR_LEN);
   new_route.price = price;
   new_route.max_capacity = max_capacity;
   new_route.available_seats = max_capacity;
