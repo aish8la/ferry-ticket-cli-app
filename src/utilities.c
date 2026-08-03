@@ -1,4 +1,5 @@
 #include "utilities.h"
+#include "validation.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -51,4 +52,27 @@ void trim_newline(char *str) {
     str[len - 1] = '\0';
     len--;
   }
+}
+
+int prompt_int(const char *prompt, int *out) {
+  char buf[LINE_BUF_SIZE];
+
+  while (1) {
+    printf("%s", prompt);
+    // returns 0 falsy if error reading or reaching EOF
+    if (!read_line(buf, sizeof(buf))) {
+      return 0;
+    }
+    // returns 1 true if success in parsing to int
+    if (parse_int(buf, out)) {
+      return 1;
+    }
+    // if parse to int then ask again
+    printf("Invalid number. Please enter digits only.\n");
+  }
+}
+
+int prompt_string(const char *prompt, char *out, size_t size) {
+  printf("%s", prompt);
+  return read_line(out, size);
 }
