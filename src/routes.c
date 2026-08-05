@@ -2,6 +2,7 @@
 #include "utilities.h"
 #include "validation.h"
 #include <stdlib.h>
+#include <string.h>
 
 int search_route_by_id(const RouteList *list, int route_id) {
   int i;
@@ -84,9 +85,15 @@ int add_route(RouteList *list, int route_id, const char *departure_island,
     return ROUTE_ERR_DUPLICATE_ID;
   }
 
+  // ensure if there is enough space in the route array
   if (!ensure_capacity(list)) {
     return ROUTE_ERR_ALLOC;
   }
+
+  // initialize the memory allocated for this variable removing garbage values
+  // so that they don't get saved to file when compiler adds padding between
+  // fields of struct
+  memset(&new_route, 0, sizeof(new_route));
 
   new_route.route_id = route_id;
   copy_str(new_route.departure_island, departure_island, ROUTE_STR_LEN);
