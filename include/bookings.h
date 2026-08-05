@@ -1,8 +1,28 @@
 #ifndef BOOKINGS_H
 #define BOOKINGS_H
 
+#include "routes.h"
+
 // length of booking related char arrays
 #define BOOKING_STR_LEN 64
+// initial capacity of array
+#define BOOKING_INITIAL_CAPACITY 4
+
+typedef enum {
+  BOOKING_STATUS_ACTIVE = 0,
+  BOOKING_STATUS_CANCELLED = 1
+} booking_status_t;
+
+typedef enum {
+  BOOKING_OK = 0,
+  BOOKING_ERR_INVALID_INPUT,
+  BOOKING_ERR_ROUTE_NOT_FOUND,
+  BOOKING_ERR_INSUFFICIENT_SEATS,
+  BOOKING_ERR_INSUFFICIENT_PAYMENT,
+  BOOKING_ERR_NOT_FOUND,
+  BOOKING_ERR_ALREADY_CANCELLED,
+  BOOKING_ERR_ALLOC
+} booking_error_t;
 
 // struct for booking data
 typedef struct {
@@ -13,7 +33,8 @@ typedef struct {
   int num_tickets;
   double payment_amount;
   double total_price;
-  int status; /* BOOKING_STATUS_ACTIVE or BOOKING_STATUS_CANCELLED */
+  booking_status_t
+      status; /* BOOKING_STATUS_ACTIVE or BOOKING_STATUS_CANCELLED */
 } Booking;
 
 // struct to store dynamic array data and next id for booking structs
