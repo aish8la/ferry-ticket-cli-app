@@ -24,6 +24,7 @@ static void admin_add_route(RouteList *routes, BookingList *bookings);
 /* ================= passenger functions ============= */
 
 static void passenger_mode(RouteList *routes, BookingList *bookings);
+static void passenger_book_ticket(RouteList *routes, BookingList *bookings);
 
 /* =================== main ===================== */
 int main(void) {
@@ -221,6 +222,74 @@ static void passenger_mode(RouteList *routes, BookingList *bookings) {
   }
 }
 
+static void passenger_book_ticket(RouteList *routes, BookingList *bookings) {
+  char name[BOOKING_STR_LEN];
+  char phone[BOOKING_STR_LEN];
+  int route_id;
+  int num_tickets;
+  double payment;
+  double balance;
+  int booking_id;
+  int result;
+
+  if (!prompt_nonempty_string("Passenger name: ", name, sizeof(name)))
+    return;
+  if (!prompt_string("Phone number: ", phone, sizeof(phone)))
+    return;
+  if (!prompt_int("Route ID: ", &route_id))
+    return;
+  if (!prompt_int("Number of tickets: ", &num_tickets))
+    return;
+  if (!prompt_double("Payment amount: ", &payment))
+    return;
+
+  result = book_ticket(bookings, routes, name, phone, route_id, num_tickets,
+                       payment, &balance, &booking_id);
+
+  switch (result) {
+  case BOOKING_OK: {
+    int route_index = search_route_by_id(routes, route_id);
+    printf("Booking confirmed!\n");
+    printf("Booking ID:   %d\n", booking_id);
+    printf("Passenger:    %s\n", name);
+    if (route_index != -1) {
+      printf("Route:        %s -> %s\n",
+             routes->routes[route_index].departure_island,
+             routes->routes[route_index].destination_island);
+    }
+    printf("Tickets:      %d\n", num_tickets);
+    // calculate total amount paid using paynment and balance
+    printf("Total paid:   %.2f\n", payment - balance);
+    printf("Balance/change: %.2f\n", balance);
+    break;
+  }
+  case BOOKING_ERR_ROUTE_NOT_FOUND:
+    printf("No route found with ID %d.\n", route_id);
+    break;
+  case BOOKING_ERR_INSUFFICIENT_SEATS:
+    printf("Not enough seats available for that route.\n");
+    break;
+  case BOOKING_ERR_INSUFFICIENT_PAYMENT: {
+    int route_index = search_route_by_id(routes, route_id);
+    double total = (route_index != -1)
+                       ? num_tickets * routes->routes[route_index].price
+                       : 0.0;
+    printf("Insufficient payment. Total due is %.2f, you paid %.2f (shortage: "
+           "%.2f).\n",
+           total, payment, total - payment);
+    break;
+  }
+  case BOOKING_ERR_INVALID_INPUT:
+    printf("Invalid input: passenger name must be non-empty and ticket count "
+           "must be positive.\n");
+    break;
+  default:
+    printf("Could not complete the booking.\n");
+    break;
+  }
+}
+
+/* ================== display helpers ================= */
 // helper to print table header for route table
 static void print_route_header(void) {
   printf("%-6s %-14s %-14s %-12s %-8s %10s %8s %8s\n", "ID", "From", "To",
