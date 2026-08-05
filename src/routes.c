@@ -122,3 +122,20 @@ void route_deduct_seats(FerryRoute *route, int tickets) {
     route->available_seats = 0;
   }
 }
+
+FerryRoute *route_list_get_by_id(RouteList *list, int route_id) {
+  int index;
+
+  if (list == NULL) {
+    return NULL;
+  }
+
+  index = search_route_by_id(list, route_id);
+  // null if search fails or not found
+  if (index == -1) {
+    return NULL;
+  }
+
+  // reference to route struct
+  return &list->routes[index];
+}
