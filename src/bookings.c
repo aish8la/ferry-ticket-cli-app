@@ -2,6 +2,7 @@
 #include "routes.h"
 #include "utilities.h"
 #include "validation.h"
+#include <stdlib.h>
 #include <string.h>
 
 int book_ticket(BookingList *booking_list, RouteList *route_list,
@@ -69,4 +70,26 @@ int book_ticket(BookingList *booking_list, RouteList *route_list,
   }
 
   return BOOKING_OK;
+}
+
+static int ensure_capacity(BookingList *list) {
+  int new_capacity;
+  Booking *new_bookings;
+
+  // return true if enough capacity
+  if (list->count < list->capacity) {
+    return 1;
+  }
+
+  new_capacity =
+      (list->capacity == 0) ? BOOKING_INITIAL_CAPACITY : list->capacity * 2;
+  new_bookings = (Booking *)realloc(list->bookings,
+                                    (size_t)new_capacity * sizeof(Booking));
+  if (new_bookings == NULL) {
+    return 0;
+  }
+
+  list->bookings = new_bookings;
+  list->capacity = new_capacity;
+  return 1;
 }

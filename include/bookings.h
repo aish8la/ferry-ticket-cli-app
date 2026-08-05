@@ -45,4 +45,11 @@ typedef struct {
   int next_booking_id;
 } BookingList;
 
+int book_ticket(BookingList *booking_list, RouteList *route_list,
+                const char *passenger_name, const char *phone_number,
+                int route_id, int num_tickets, double payment_amount,
+
+                double *out_balance, int *out_booking_id);
+static int ensure_capacity(BookingList *list);
+
 #endif // !BOOKINGS_H
