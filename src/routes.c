@@ -110,3 +110,15 @@ int add_route(RouteList *list, int route_id, const char *departure_island,
   list->count++;
   return ROUTE_OK;
 }
+
+void route_deduct_seats(FerryRoute *route, int tickets) {
+  if (route == NULL) {
+    return;
+  }
+  // deduct available seats from route
+  route->available_seats -= tickets;
+  // ensure that availabel seats don't go below 0
+  if (route->available_seats < 0) {
+    route->available_seats = 0;
+  }
+}

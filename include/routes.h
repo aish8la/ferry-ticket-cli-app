@@ -40,5 +40,6 @@ int add_route(RouteList *list, int route_id, const char *departure_island,
 int search_route_by_id(const RouteList *list, int route_id);
 int route_id_exists(const RouteList *list, int route_id);
 int route_list_append(RouteList *list, const FerryRoute *route);
+void route_deduct_seats(FerryRoute *route, int tickets);
 
 #endif // !ROUTES_H
