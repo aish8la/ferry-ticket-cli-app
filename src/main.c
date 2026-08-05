@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "bookings.h"
+#include "files.h"
 #include "routes.h"
 #include "utilities.h"
 
@@ -143,7 +144,25 @@ static void admin_add_route(RouteList *routes, BookingList *bookings) {
   result = add_route(routes, route_id, departure, destination, date, time_str,
                      price, capacity);
 
-  return;
+  switch (result) {
+  case ROUTE_OK:
+    printf("Route %d added successfully.\n", route_id);
+    save_routes_to_file("routes.dat", routes);
+    break;
+  case ROUTE_ERR_DUPLICATE_ID:
+    printf("A route with ID %d already exists.\n", route_id);
+    break;
+  case ROUTE_ERR_INVALID_INPUT:
+    printf("Invalid input: destination must be non-empty, price and capacity "
+           "must be positive.\n");
+    break;
+  case ROUTE_ERR_ALLOC:
+    printf("Error: could not allocate memory for the new route.\n");
+    break;
+  default:
+    printf("Could not add route.\n");
+    break;
+  }
 }
 
 /* ----------------- passender mode -------------- */
