@@ -10,6 +10,12 @@
 #define ROUTES_FILE "route.dat"
 /* ----------------- function prototypes --------------- */
 
+/* ================= display helpers =================== */
+
+static void print_route_header(void);
+static void print_route_row(const FerryRoute *r);
+static void print_route_table(const RouteList *list);
+
 /* ================== admin function =============== */
 
 static void admin_mode(RouteList *routes, BookingList *bookings);
@@ -43,7 +49,7 @@ int main(void) {
       admin_mode(&routes, &bookings);
       break;
     case 2:
-      printf("passenger");
+      passenger_mode(&routes, &bookings);
       break;
     case 3:
       printf("Goodbye.\n");
@@ -189,7 +195,7 @@ static void passenger_mode(RouteList *routes, BookingList *bookings) {
 
     switch (choice) {
     case 1:
-      // view abailable routes
+      print_route_table(routes);
       break;
     case 2:
       // search for route
@@ -212,5 +218,36 @@ static void passenger_mode(RouteList *routes, BookingList *bookings) {
       printf("Invalid choice. Please try again.\n");
       break;
     }
+  }
+}
+
+// helper to print table header for route table
+static void print_route_header(void) {
+  printf("%-6s %-14s %-14s %-12s %-8s %10s %8s %8s\n", "ID", "From", "To",
+         "Date", "Time", "Price", "MaxCap", "AvailSt");
+}
+
+// helper to print the row for route table
+static void print_route_row(const FerryRoute *r) {
+  printf("%-6d %-14s %-14s %-12s %-8s %10.2f %8d %8d\n", r->route_id,
+         r->departure_island, r->destination_island, r->departure_date,
+         r->departure_time, r->price, r->max_capacity, r->available_seats);
+}
+
+// print the route table from the route list
+static void print_route_table(const RouteList *list) {
+  int i;
+
+  // if count of routes is 0 then print not available
+  if (list->count == 0) {
+    printf("No routes available.\n");
+    return;
+  }
+
+  // print header and loop over route all routes in the array and print row for
+  // each route
+  print_route_header();
+  for (i = 0; i < list->count; i++) {
+    print_route_row(&list->routes[i]);
   }
 }
