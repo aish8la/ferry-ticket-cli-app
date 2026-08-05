@@ -1,6 +1,7 @@
 #include "bookings.h"
 #include "routes.h"
 #include "utilities.h"
+#include "validation.h"
 #include <string.h>
 
 int book_ticket(BookingList *booking_list, RouteList *route_list,
@@ -10,6 +11,12 @@ int book_ticket(BookingList *booking_list, RouteList *route_list,
   FerryRoute *route;
   double total_price;
   Booking new_booking;
+
+  if (booking_list == NULL || route_list == NULL ||
+      !is_non_empty(passenger_name) || !is_positive_int(num_tickets) ||
+      payment_amount < 0.0) {
+    return BOOKING_ERR_INVALID_INPUT;
+  }
 
   // get route by id
   route = route_list_get_by_id(route_list, route_id);
