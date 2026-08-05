@@ -1,6 +1,7 @@
 #ifndef FILES_H
 #define FILES_H
 
+#include "bookings.h"
 #include "routes.h"
 
 typedef enum {
@@ -14,5 +15,6 @@ typedef enum {
 
 int save_routes_to_file(const char *filename, const RouteList *list);
 int load_routes_from_file(const char *filename, RouteList *list);
+int save_bookings_to_file(const char *filename, const BookingList *list);
 
 #endif // !FILES_H

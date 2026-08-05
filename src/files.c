@@ -76,3 +76,21 @@ int load_routes_from_file(const char *filename, RouteList *list) {
   fclose(fp);
   return FILE_IO_OK;
 }
+
+int save_bookings_to_file(const char *filename, const BookingList *list) {
+  FILE *fp;
+  int result;
+
+  if (filename == NULL || list == NULL) {
+    return FILE_IO_ERR_INVALID_INPUT;
+  }
+
+  fp = fopen(filename, "wb");
+  if (fp == NULL) {
+    return FILE_IO_ERR_OPEN;
+  }
+
+  result = write_records(fp, list->bookings, sizeof(Booking), list->count);
+  fclose(fp);
+  return result;
+}
