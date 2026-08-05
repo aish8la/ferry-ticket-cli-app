@@ -6,6 +6,8 @@
 #include "routes.h"
 #include "utilities.h"
 
+// file name of route data
+#define ROUTES_FILE "route.dat"
 /* ----------------- function prototypes --------------- */
 
 /* ================== admin function =============== */
@@ -24,6 +26,8 @@ int main(void) {
       .routes = malloc(sizeof(FerryRoute) * 10), .count = 0, .capacity = 10};
   BookingList bookings;
   int choice;
+
+  load_routes_from_file(ROUTES_FILE, &routes);
 
   printf("Ferry Ticket Booking & Management System\n");
 
@@ -147,7 +151,7 @@ static void admin_add_route(RouteList *routes, BookingList *bookings) {
   switch (result) {
   case ROUTE_OK:
     printf("Route %d added successfully.\n", route_id);
-    save_routes_to_file("routes.dat", routes);
+    save_routes_to_file(ROUTES_FILE, routes);
     break;
   case ROUTE_ERR_DUPLICATE_ID:
     printf("A route with ID %d already exists.\n", route_id);
