@@ -145,3 +145,10 @@ void route_list_init(RouteList *list) {
   list->count = 0;
   list->capacity = 0;
 }
+
+void route_list_free(RouteList *list) {
+  free(list->routes);
+  list->routes = NULL;
+  list->count = 0;
+  list->capacity = 0;
+}

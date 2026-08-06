@@ -118,3 +118,10 @@ void booking_list_init(BookingList *list) {
   list->capacity = 0;
   list->next_booking_id = 1;
 }
+
+void booking_list_free(BookingList *list) {
+  free(list->bookings);
+  list->bookings = NULL;
+  list->count = 0;
+  list->capacity = 0;
+}

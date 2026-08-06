@@ -43,5 +43,6 @@ int route_list_append(RouteList *list, const FerryRoute *route);
 void route_deduct_seats(FerryRoute *route, int tickets);
 FerryRoute *route_list_get_by_id(RouteList *list, int route_id);
 void route_list_init(RouteList *list);
+void route_list_free(RouteList *list);
 
 #endif // !ROUTES_H
