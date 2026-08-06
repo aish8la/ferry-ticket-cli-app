@@ -50,7 +50,6 @@ int book_ticket(BookingList *booking_list, RouteList *route_list,
                 int route_id, int num_tickets, double payment_amount,
 
                 double *out_balance, int *out_booking_id);
-static int ensure_capacity(BookingList *list);
 int booking_list_append(BookingList *list, const Booking *booking);
 
 #endif // !BOOKINGS_H
