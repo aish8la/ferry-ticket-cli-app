@@ -31,7 +31,10 @@ int main(void) {
 
   RouteList routes = {
       .routes = malloc(sizeof(FerryRoute) * 10), .count = 0, .capacity = 10};
-  BookingList bookings;
+  BookingList bookings = {.bookings = malloc(sizeof(Booking)),
+                          .capacity = 10,
+                          .count = 0,
+                          .next_booking_id = 0};
   int choice;
 
   load_routes_from_file(ROUTES_FILE, &routes);
@@ -205,7 +208,7 @@ static void passenger_mode(RouteList *routes, BookingList *bookings) {
       // sort routes
       break;
     case 4:
-      // book ticket
+      passenger_book_ticket(routes, bookings);
       break;
     case 5:
       // view booking
