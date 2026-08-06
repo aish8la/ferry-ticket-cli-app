@@ -34,13 +34,12 @@ static void save_all(const RouteList *routes, const BookingList *bookings);
 /* =================== main ===================== */
 int main(void) {
 
-  RouteList routes = {
-      .routes = malloc(sizeof(FerryRoute) * 10), .count = 0, .capacity = 10};
-  BookingList bookings = {.bookings = malloc(sizeof(Booking)),
-                          .capacity = 10,
-                          .count = 0,
-                          .next_booking_id = 0};
+  RouteList routes;
+  BookingList bookings;
   int choice;
+
+  route_list_init(&routes);
+  booking_list_init(&bookings);
 
   load_routes_from_file(ROUTES_FILE, &routes);
 
@@ -62,12 +61,19 @@ int main(void) {
       break;
     case 3:
       printf("Goodbye.\n");
+      // free up memory allocated for the list
+      route_list_free(&routes);
+      booking_list_free(&bookings);
       return 0;
     default:
       printf("Invalid choice. Please try again.\n");
       break;
     }
   }
+
+  // free up memory allocated
+  route_list_free(&routes);
+  booking_list_free(&bookings);
 
   return 0;
 }
