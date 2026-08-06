@@ -16,6 +16,9 @@
 static void print_route_header(void);
 static void print_route_row(const FerryRoute *r);
 static void print_route_table(const RouteList *list);
+static void print_booking_table(const BookingList *list);
+static void print_booking_row(const Booking *b);
+static void print_booking_header(void);
 
 /* ================== admin function =============== */
 
@@ -335,6 +338,34 @@ static void print_route_table(const RouteList *list) {
     print_route_row(&list->routes[i]);
   }
 }
+
+static void print_booking_header(void) {
+  printf("%-10s %-16s %-14s %-8s %-8s %10s %10s %-10s\n", "BookingID",
+         "Passenger", "Phone", "RouteID", "Tickets", "Paid", "Total", "Status");
+}
+
+static void print_booking_row(const Booking *b) {
+  printf("%-10d %-16s %-14s %-8d %-8d %10.2f %10.2f %-10s\n", b->booking_id,
+         b->passenger_name, b->phone_number, b->route_id, b->num_tickets,
+         b->payment_amount, b->total_price,
+         b->status == BOOKING_STATUS_ACTIVE ? "Active" : "Cancelled");
+}
+
+static void print_booking_table(const BookingList *list) {
+  int i;
+
+  if (list->count == 0) {
+    printf("No bookings recorded.\n");
+    return;
+  }
+
+  print_booking_header();
+  for (i = 0; i < list->count; i++) {
+    print_booking_row(&list->bookings[i]);
+  }
+}
+
+/* ======================= helpers ========================= */
 
 static void save_all(const RouteList *routes, const BookingList *bookings) {
   if (save_routes_to_file(ROUTES_FILE, routes) != FILE_IO_OK) {
