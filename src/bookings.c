@@ -93,3 +93,21 @@ static int ensure_capacity(BookingList *list) {
   list->capacity = new_capacity;
   return 1;
 }
+
+int booking_list_append(BookingList *list, const Booking *booking) {
+  if (list == NULL || booking == NULL) {
+    return BOOKING_ERR_INVALID_INPUT;
+  }
+  if (!ensure_capacity(list)) {
+    return BOOKING_ERR_ALLOC;
+  }
+  // append booking data end of array
+  list->bookings[list->count] = *booking;
+  list->count++;
+  // ensure bookings id is greater than or equal to next_booking_id in list and
+  // assigne the next_booking_id value by booking_id + 1
+  if (booking->booking_id >= list->next_booking_id) {
+    list->next_booking_id = booking->booking_id + 1;
+  }
+  return BOOKING_OK;
+}
