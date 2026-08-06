@@ -77,6 +77,7 @@ int load_routes_from_file(const char *filename, RouteList *list) {
   return FILE_IO_OK;
 }
 
+// sames as route saving file but for booking
 int save_bookings_to_file(const char *filename, const BookingList *list) {
   FILE *fp;
   int result;
@@ -93,4 +94,44 @@ int save_bookings_to_file(const char *filename, const BookingList *list) {
   result = write_records(fp, list->bookings, sizeof(Booking), list->count);
   fclose(fp);
   return result;
+}
+
+int load_bookings_from_file(const char *filename, BookingList *list) {
+  FILE *fp;
+  int count;
+  int i;
+  Booking booking;
+
+  if (filename == NULL || list == NULL) {
+    return FILE_IO_ERR_INVALID_INPUT;
+  }
+
+  // open the file in read binary mode
+  fp = fopen(filename, "rb");
+  // if file open failes
+  if (fp == NULL) {
+    return FILE_IO_ERR_OPEN;
+  }
+
+  // read the count value from file to memory
+  if (fread(&count, sizeof(int), 1, fp) != 1) {
+    // close the file and return error code if failed to read 1 item
+    fclose(fp);
+    return FILE_IO_ERR_FORMAT;
+  }
+
+  // read all the booking data from file into memory and append it to booking
+  // list
+  for (i = 0; i < count; i++) {
+    if (fread(&booking, sizeof(Booking), 1, fp) != 1) {
+      break;
+    }
+    if (booking_list_append(list, &booking) != BOOKING_OK) {
+      fclose(fp);
+      return FILE_IO_ERR_ALLOC;
+    }
+  }
+
+  fclose(fp);
+  return FILE_IO_OK;
 }
