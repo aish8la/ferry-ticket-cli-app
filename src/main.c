@@ -123,6 +123,7 @@ static void admin_mode(RouteList *routes, BookingList *bookings) {
       break;
     case 7:
       // view all bookings
+      print_booking_table(bookings);
       break;
     case 8:
       // summary
