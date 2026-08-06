@@ -8,6 +8,7 @@
 
 // file name of route data
 #define ROUTES_FILE "route.dat"
+#define BOOKINGS_FILE "bookings.dat"
 /* ----------------- function prototypes --------------- */
 
 /* ================= display helpers =================== */
@@ -25,6 +26,10 @@ static void admin_add_route(RouteList *routes, BookingList *bookings);
 
 static void passenger_mode(RouteList *routes, BookingList *bookings);
 static void passenger_book_ticket(RouteList *routes, BookingList *bookings);
+
+/* ==================== other functions ================== */
+
+static void save_all(const RouteList *routes, const BookingList *bookings);
 
 /* =================== main ===================== */
 int main(void) {
@@ -161,7 +166,7 @@ static void admin_add_route(RouteList *routes, BookingList *bookings) {
   switch (result) {
   case ROUTE_OK:
     printf("Route %d added successfully.\n", route_id);
-    save_routes_to_file(ROUTES_FILE, routes);
+    save_all(routes, bookings);
     break;
   case ROUTE_ERR_DUPLICATE_ID:
     printf("A route with ID %d already exists.\n", route_id);
@@ -264,6 +269,7 @@ static void passenger_book_ticket(RouteList *routes, BookingList *bookings) {
     // calculate total amount paid using paynment and balance
     printf("Total paid:   %.2f\n", payment - balance);
     printf("Balance/change: %.2f\n", balance);
+    save_all(routes, bookings);
     break;
   }
   case BOOKING_ERR_ROUTE_NOT_FOUND:
@@ -321,5 +327,14 @@ static void print_route_table(const RouteList *list) {
   print_route_header();
   for (i = 0; i < list->count; i++) {
     print_route_row(&list->routes[i]);
+  }
+}
+
+static void save_all(const RouteList *routes, const BookingList *bookings) {
+  if (save_routes_to_file(ROUTES_FILE, routes) != FILE_IO_OK) {
+    printf("Warning: could not save routes to %s.\n", ROUTES_FILE);
+  }
+  if (save_bookings_to_file(BOOKINGS_FILE, bookings) != FILE_IO_OK) {
+    printf("Warning: could not save bookings to %s.\n", BOOKINGS_FILE);
   }
 }
