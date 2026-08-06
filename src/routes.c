@@ -139,3 +139,9 @@ FerryRoute *route_list_get_by_id(RouteList *list, int route_id) {
   // reference to route struct
   return &list->routes[index];
 }
+
+void route_list_init(RouteList *list) {
+  list->routes = NULL;
+  list->count = 0;
+  list->capacity = 0;
+}

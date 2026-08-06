@@ -111,3 +111,10 @@ int booking_list_append(BookingList *list, const Booking *booking) {
   }
   return BOOKING_OK;
 }
+
+void booking_list_init(BookingList *list) {
+  list->bookings = NULL;
+  list->count = 0;
+  list->capacity = 0;
+  list->next_booking_id = 1;
+}
