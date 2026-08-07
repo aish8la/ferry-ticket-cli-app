@@ -33,7 +33,7 @@ static void admin_view_summary(const RouteList *routes,
 static void passenger_mode(RouteList *routes, BookingList *bookings);
 static void passenger_book_ticket(RouteList *routes, BookingList *bookings);
 static void passenger_view_booking(const BookingList *bookings);
-
+static void passenger_cancel_booking(RouteList *routes, BookingList *bookings);
 /* ==================== other functions ================== */
 
 static void save_all(const RouteList *routes, const BookingList *bookings);
@@ -360,7 +360,7 @@ static void passenger_mode(RouteList *routes, BookingList *bookings) {
       passenger_view_booking(bookings);
       break;
     case 6:
-      // cancel booking
+      passenger_cancel_booking(routes, bookings);
       break;
     case 7:
       return;
@@ -454,6 +454,31 @@ static void passenger_view_booking(const BookingList *bookings) {
 
   print_booking_header();
   print_booking_row(&bookings->bookings[index]);
+}
+
+static void passenger_cancel_booking(RouteList *routes, BookingList *bookings) {
+  int booking_id;
+  int result;
+
+  if (!prompt_int("Booking ID to cancel: ", &booking_id))
+    return;
+
+  result = cancel_booking(bookings, routes, booking_id);
+  switch (result) {
+  case BOOKING_OK:
+    printf("Booking %d cancelled. Seats have been released.\n", booking_id);
+    save_all(routes, bookings);
+    break;
+  case BOOKING_ERR_NOT_FOUND:
+    printf("No booking found with ID %d.\n", booking_id);
+    break;
+  case BOOKING_ERR_ALREADY_CANCELLED:
+    printf("Booking %d has already been cancelled.\n", booking_id);
+    break;
+  default:
+    printf("Could not cancel the booking.\n");
+    break;
+  }
 }
 
 /* ================== display helpers ================= */
