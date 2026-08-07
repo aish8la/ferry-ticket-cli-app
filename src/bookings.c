@@ -243,3 +243,42 @@ int search_booking_by_id(const BookingList *list, int booking_id) {
   }
   return -1;
 }
+
+int cancel_booking(BookingList *booking_list, RouteList *routes_list,
+                   int booking_id) {
+  int index;
+  Booking *booking;
+  FerryRoute *route;
+
+  if (booking_list == NULL) {
+    return BOOKING_ERR_INVALID_INPUT;
+  }
+
+  index = search_booking_by_id(booking_list, booking_id);
+  if (index == -1) {
+    return BOOKING_ERR_NOT_FOUND;
+  }
+
+  // reference to the booking to be cancelled
+  booking = &booking_list->bookings[index];
+  // check if already cancelled
+  if (booking->status == BOOKING_STATUS_CANCELLED) {
+    return BOOKING_ERR_ALREADY_CANCELLED;
+  }
+
+  // change status of the bookings
+  booking->status = BOOKING_STATUS_CANCELLED;
+
+  // ensures that route list is only accessed as long as it is not null by some
+  // edge case
+  if (routes_list != NULL) {
+    route = route_list_get_by_id(routes_list, booking->route_id);
+    // ensures that route is not null before attempting to access it
+    if (route != NULL) {
+      // restores the seats for the route
+      route_restore_seats(route, booking->num_tickets);
+    }
+  }
+
+  return BOOKING_OK;
+}
