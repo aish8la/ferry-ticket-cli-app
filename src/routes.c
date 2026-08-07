@@ -192,3 +192,32 @@ int update_route(RouteList *list, int route_id, const char *departure_island,
 
   return ROUTE_OK;
 }
+
+int remove_route(RouteList *list, int route_id, int has_active_bookings) {
+  int index;
+  int i;
+
+  if (list == NULL) {
+    return ROUTE_ERR_INVALID_INPUT;
+  }
+
+  index = search_route_by_id(list, route_id);
+  if (index == -1) {
+    return ROUTE_ERR_NOT_FOUND;
+  }
+  // to ensure that routes with bookings cannot be removed
+  if (has_active_bookings) {
+    return ROUTE_ERR_HAS_ACTIVE_BOOKINGS;
+  }
+
+  // moves all routes after the route to be deleted to the left of the array
+  // overwriting the previous route
+  // still keeps a copy of the last route in the list in memory in the last
+  // block but it won't be accessed since now count is updated to exclude that
+  // element
+  for (i = index; i < list->count - 1; i++) {
+    list->routes[i] = list->routes[i + 1];
+  }
+  list->count--;
+  return ROUTE_OK;
+}

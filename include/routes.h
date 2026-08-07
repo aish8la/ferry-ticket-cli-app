@@ -47,5 +47,6 @@ void route_list_free(RouteList *list);
 int update_route(RouteList *list, int route_id, const char *departure_island,
                  const char *destination_island, const char *departure_date,
                  const char *departure_time, double price, int max_capacity);
+int remove_route(RouteList *list, int route_id, int has_active_bookings);
 
 #endif // !ROUTES_H
