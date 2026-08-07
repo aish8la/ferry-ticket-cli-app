@@ -150,3 +150,81 @@ int count_active_bookings_for_route(const BookingList *list, int route_id) {
   }
   return count;
 }
+
+void compute_booking_summary(int total_routes, const BookingList *bookings,
+                             BookingSummary *out_summary) {
+  int i, j;
+  int route_id;
+  int tickets_sum;
+  int already_seen;
+
+  if (out_summary == NULL) {
+    return;
+  }
+
+  out_summary->total_routes = total_routes;
+  out_summary->total_active_bookings = 0;
+  out_summary->total_tickets_booked = 0;
+  out_summary->total_revenue = 0.0;
+  out_summary->most_booked_route_id = -1;
+  out_summary->most_booked_route_tickets = 0;
+
+  if (bookings == NULL) {
+    return;
+  }
+
+  // run loop for all of the bookings
+  for (i = 0; i < bookings->count; i++) {
+    // if current booking is not active then skip it
+    if (bookings->bookings[i].status != BOOKING_STATUS_ACTIVE) {
+      continue;
+    }
+
+    // increment total active booking count
+    out_summary->total_active_bookings++;
+    // add total tickets
+    out_summary->total_tickets_booked += bookings->bookings[i].num_tickets;
+    // add total price
+    out_summary->total_revenue += bookings->bookings[i].total_price;
+
+    // sum ticket totals per route once per unique route_id the first time it is
+    // encountered while looping
+    route_id = bookings->bookings[i].route_id;
+
+    already_seen = 0;
+    // loop until before current outer loop iteration (before i value)
+    for (j = 0; j < i; j++) {
+      // checks if current booking record is encountered before reaching current
+      // outer loop route and breaks out of the loop
+      if (bookings->bookings[j].status == BOOKING_STATUS_ACTIVE &&
+          bookings->bookings[j].route_id == route_id) {
+        already_seen = 1;
+        break;
+      }
+    }
+
+    // if already seen then skip the below code and continue to the next loop
+    if (already_seen) {
+      continue;
+    }
+
+    tickets_sum = 0;
+
+    // go over the booking records again this time starting from the current out
+    // loop element and sum the booking tickets number for same route id
+    for (j = i; j < bookings->count; j++) {
+      if (bookings->bookings[j].status == BOOKING_STATUS_ACTIVE &&
+          bookings->bookings[j].route_id == route_id) {
+        tickets_sum += bookings->bookings[j].num_tickets;
+      }
+    }
+
+    // if current ticket sum is larger than the current
+    // most_booked_route_tickets value then set the current ticket id and ticket
+    // sum as the most_booked_route values
+    if (tickets_sum > out_summary->most_booked_route_tickets) {
+      out_summary->most_booked_route_tickets = tickets_sum;
+      out_summary->most_booked_route_id = route_id;
+    }
+  }
+}

@@ -45,6 +45,15 @@ typedef struct {
   int next_booking_id;
 } BookingList;
 
+typedef struct {
+  int total_routes;
+  int total_active_bookings;
+  int total_tickets_booked;
+  double total_revenue;
+  int most_booked_route_id;      // -1 if there are no active bookings
+  int most_booked_route_tickets; // ticket count for most_booked_route_id
+} BookingSummary;
+
 int book_ticket(BookingList *booking_list, RouteList *route_list,
                 const char *passenger_name, const char *phone_number,
                 int route_id, int num_tickets, double payment_amount,
@@ -54,5 +63,7 @@ int booking_list_append(BookingList *list, const Booking *booking);
 void booking_list_init(BookingList *list);
 void booking_list_free(BookingList *list);
 int count_active_bookings_for_route(const BookingList *list, int route_id);
+void compute_booking_summary(int total_routes, const BookingList *bookings,
+                             BookingSummary *out_summary);
 
 #endif // !BOOKINGS_H
