@@ -50,5 +50,9 @@ int update_route(RouteList *list, int route_id, const char *departure_island,
 int remove_route(RouteList *list, int route_id, int has_active_bookings);
 int search_route_by_destination(const RouteList *list, const char *destination,
                                 int *out_indices, int max_results);
+void sort_routes_by_price(RouteList *list, int ascending);
+void sort_routes_by_destination(RouteList *list, int ascending);
+void sort_routes_by_date(RouteList *list, int ascending);
+void sort_routes_by_available_seats(RouteList *list, int ascending);
 
 #endif // !ROUTES_H

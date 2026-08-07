@@ -244,3 +244,99 @@ int search_route_by_destination(const RouteList *list, const char *destination,
   }
   return found;
 }
+
+// qsort comparison functions
+static int compare_price_ascending(const void *a, const void *b) {
+  const FerryRoute *route_a = a;
+  const FerryRoute *route_b = b;
+
+  // comparision function returns -1 if a should have a lower index
+  if (route_a->price < route_b->price)
+    return -1;
+  // comparison function return 1 if a should have higher index
+  if (route_a->price > route_b->price)
+    return 1;
+
+  // return zero if no change
+  return 0;
+}
+
+static int compare_price_descending(const void *a, const void *b) {
+  // swaps a and b passed to the comparison function so sorting is reversed
+  return compare_price_ascending(b, a);
+}
+
+static int compare_destination_ascending(const void *a, const void *b) {
+  const FerryRoute *route_a = a;
+  const FerryRoute *route_b = b;
+
+  return strcmp(route_a->destination_island, route_b->destination_island);
+}
+
+static int compare_destination_descending(const void *a, const void *b) {
+  return compare_destination_ascending(b, a);
+}
+
+static int compare_date_ascending(const void *a, const void *b) {
+  const FerryRoute *route_a = a;
+  const FerryRoute *route_b = b;
+
+  return strcmp(route_a->departure_date, route_b->departure_date);
+}
+
+static int compare_date_descending(const void *a, const void *b) {
+  return compare_date_ascending(b, a);
+}
+
+static int compare_available_seats_ascending(const void *a, const void *b) {
+  const FerryRoute *route_a = a;
+  const FerryRoute *route_b = b;
+
+  if (route_a->available_seats < route_b->available_seats)
+    return -1;
+  if (route_a->available_seats > route_b->available_seats)
+    return 1;
+
+  return 0;
+}
+
+static int compare_available_seats_descending(const void *a, const void *b) {
+  return compare_available_seats_ascending(b, a);
+}
+
+// wrappers for the qsort to avoid null list errors
+void sort_routes_by_price(RouteList *list, int ascending) {
+  if (list == NULL)
+    return;
+
+  // qsort function used to sort value and the comparision function depending on
+  // the truthy value of ascending
+  qsort(list->routes, list->count, sizeof(FerryRoute),
+        ascending ? compare_price_ascending : compare_price_descending);
+}
+
+void sort_routes_by_destination(RouteList *list, int ascending) {
+  if (list == NULL)
+    return;
+
+  qsort(list->routes, list->count, sizeof(FerryRoute),
+        ascending ? compare_destination_ascending
+                  : compare_destination_descending);
+}
+
+void sort_routes_by_date(RouteList *list, int ascending) {
+  if (list == NULL)
+    return;
+
+  qsort(list->routes, list->count, sizeof(FerryRoute),
+        ascending ? compare_date_ascending : compare_date_descending);
+}
+
+void sort_routes_by_available_seats(RouteList *list, int ascending) {
+  if (list == NULL)
+    return;
+
+  qsort(list->routes, list->count, sizeof(FerryRoute),
+        ascending ? compare_available_seats_ascending
+                  : compare_available_seats_descending);
+}
