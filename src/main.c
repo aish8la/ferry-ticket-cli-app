@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "bookings.h"
 #include "files.h"
@@ -24,6 +23,7 @@ static void print_booking_header(void);
 
 static void admin_mode(RouteList *routes, BookingList *bookings);
 static void admin_add_route(RouteList *routes, BookingList *bookings);
+static void admin_update_route(RouteList *routes, BookingList *bookings);
 
 /* ================= passenger functions ============= */
 
@@ -117,7 +117,7 @@ static void admin_mode(RouteList *routes, BookingList *bookings) {
       admin_add_route(routes, bookings);
       break;
     case 2:
-      // update route
+      admin_update_route(routes, bookings);
       break;
     case 3:
       // remove rout
@@ -200,6 +200,70 @@ static void admin_add_route(RouteList *routes, BookingList *bookings) {
     break;
   default:
     printf("Could not add route.\n");
+    break;
+  }
+}
+
+static void admin_update_route(RouteList *routes, BookingList *bookings) {
+  int route_id;
+  int index;
+  char departure[ROUTE_STR_LEN];
+  char destination[ROUTE_STR_LEN];
+  char date[ROUTE_STR_LEN];
+  char time_str[ROUTE_STR_LEN];
+  double price;
+  int capacity;
+  int result;
+
+  if (!prompt_int("Route ID to update: ", &route_id))
+    return;
+
+  index = search_route_by_id(routes, route_id);
+  // if route not found
+  if (index == -1) {
+    printf("No route found with ID %d.\n", route_id);
+    return;
+  }
+
+  // display current ditails
+  printf("Current details:\n");
+  print_route_header();
+  print_route_row(&routes->routes[index]);
+  printf("Enter new details:\n");
+
+  // prompt new details
+  if (!prompt_string("Departure island: ", departure, sizeof(departure)))
+    return;
+  if (!prompt_nonempty_string("Destination island: ", destination,
+                              sizeof(destination)))
+    return;
+  if (!prompt_string("Departure date: ", date, sizeof(date)))
+    return;
+  if (!prompt_string("Departure time: ", time_str, sizeof(time_str)))
+    return;
+  if (!prompt_double("Ticket price: ", &price))
+    return;
+  if (!prompt_int("Maximum seat capacity: ", &capacity))
+    return;
+
+  // call update function to update the route in memory
+  result = update_route(routes, route_id, departure, destination, date,
+                        time_str, price, capacity);
+  switch (result) {
+  case ROUTE_OK:
+    printf("Route %d updated successfully.\n", route_id);
+    // save to file
+    save_all(routes, bookings);
+    break;
+  case ROUTE_ERR_NOT_FOUND:
+    printf("No route found with ID %d.\n", route_id);
+    break;
+  case ROUTE_ERR_INVALID_INPUT:
+    printf("Invalid input, or new capacity is smaller than seats already "
+           "booked.\n");
+    break;
+  default:
+    printf("Could not update route.\n");
     break;
   }
 }
