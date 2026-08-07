@@ -340,3 +340,18 @@ void sort_routes_by_available_seats(RouteList *list, int ascending) {
         ascending ? compare_available_seats_ascending
                   : compare_available_seats_descending);
 }
+
+void route_restore_seats(FerryRoute *route, int tickets) {
+  if (route == NULL) {
+    return;
+  }
+
+  // add tickets to availabale seats
+  route->available_seats += tickets;
+  // handle edge case where after restore the available seats is more than
+  // max_capacity due to max_capacity being modified caps the availabale seats
+  // to max capacity
+  if (route->available_seats > route->max_capacity) {
+    route->available_seats = route->max_capacity;
+  }
+}

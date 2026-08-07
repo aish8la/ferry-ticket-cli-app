@@ -54,5 +54,6 @@ void sort_routes_by_price(RouteList *list, int ascending);
 void sort_routes_by_destination(RouteList *list, int ascending);
 void sort_routes_by_date(RouteList *list, int ascending);
 void sort_routes_by_available_seats(RouteList *list, int ascending);
+void route_restore_seats(FerryRoute *route, int tickets);
 
 #endif // !ROUTES_H
