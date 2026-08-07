@@ -2,8 +2,12 @@
 #include "routes.h"
 #include "utilities.h"
 #include "validation.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// prototype for static functions
+static int ensure_capacity(BookingList *list);
 
 int book_ticket(BookingList *booking_list, RouteList *route_list,
                 const char *passenger_name, const char *phone_number,
@@ -34,6 +38,10 @@ int book_ticket(BookingList *booking_list, RouteList *route_list,
   // check if payment amount is sufficient
   if (payment_amount < total_price) {
     return BOOKING_ERR_INSUFFICIENT_PAYMENT;
+  }
+  // ensure capacity to ensure enough memory allocated
+  if (!ensure_capacity(booking_list)) {
+    return BOOKING_ERR_ALLOC;
   }
 
   // deduct availabel seats from route
