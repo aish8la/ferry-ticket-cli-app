@@ -221,3 +221,26 @@ int remove_route(RouteList *list, int route_id, int has_active_bookings) {
   list->count--;
   return ROUTE_OK;
 }
+
+int search_route_by_destination(const RouteList *list, const char *destination,
+                                int *out_indices, int max_results) {
+  int i;
+  int found = 0;
+
+  if (list == NULL || destination == NULL) {
+    return 0;
+  }
+
+  for (i = 0; i < list->count; i++) {
+    if (str_equal_ci(list->routes[i].destination_island, destination)) {
+      // checks if num of found routes is not greater than maximum allowed and
+      // that out_indices is not null
+      if (found < max_results && out_indices != NULL) {
+        // add index to the array
+        out_indices[found] = i;
+      }
+      found++;
+    }
+  }
+  return found;
+}
