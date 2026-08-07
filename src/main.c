@@ -168,7 +168,8 @@ static void admin_add_route(RouteList *routes, BookingList *bookings) {
   if (!prompt_int("Route ID: ", &route_id)) {
     return;
   }
-  if (!prompt_string("Departure island: ", departure, sizeof(departure))) {
+  if (!prompt_nonempty_string("Departure island: ", departure,
+                              sizeof(departure))) {
     return;
   }
   if (!prompt_nonempty_string("Destination island: ", destination,
@@ -240,7 +241,8 @@ static void admin_update_route(RouteList *routes, BookingList *bookings) {
   printf("Enter new details:\n");
 
   // prompt new details
-  if (!prompt_string("Departure island: ", departure, sizeof(departure)))
+  if (!prompt_nonempty_string("Departure island: ", departure,
+                              sizeof(departure)))
     return;
   if (!prompt_nonempty_string("Destination island: ", destination,
                               sizeof(destination)))
