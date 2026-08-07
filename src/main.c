@@ -39,6 +39,7 @@ static void seed_preset_data(RouteList *routes, BookingList *bookings);
 /* ===================== shared functions ========================== */
 
 static void search_routes(const RouteList *routes);
+static void sort_routes(RouteList *routes, int allow_date_and_seats);
 
 /* =================== main ===================== */
 int main(void) {
@@ -134,7 +135,7 @@ static void admin_mode(RouteList *routes, BookingList *bookings) {
       search_routes(routes);
       break;
     case 6:
-      // sort routes
+      sort_routes(routes, 1);
       break;
     case 7:
       print_booking_table(bookings);
@@ -550,4 +551,58 @@ static void search_routes(const RouteList *routes) {
   } else {
     printf("Invalid choice.\n");
   }
+}
+
+static void sort_routes(RouteList *routes, int allow_date_and_seats) {
+  int field_choice;
+  int order_choice;
+  int ascending;
+
+  // check if allowed to sort by date and seats (for admin and passenger mode)
+  if (allow_date_and_seats) {
+    printf("Sort by: 1) Price  2) Destination  3) Date  4) Available seats\n");
+  } else {
+    printf("Sort by: 1) Price  2) Destination\n");
+  }
+  if (!prompt_int("Choice: ", &field_choice)) {
+    return;
+  }
+
+  printf("Order: 1) Ascending  2) Descending\n");
+  if (!prompt_int("Choice: ", &order_choice)) {
+    return;
+  }
+
+  // if order_choice is not 2 then it is ascending
+  ascending = (order_choice != 2);
+
+  switch (field_choice) {
+  case 1:
+    sort_routes_by_price(routes, ascending);
+    break;
+  case 2:
+    sort_routes_by_destination(routes, ascending);
+    break;
+    // only allow the following if allow_date_and_seats is truthy
+  case 3:
+    if (allow_date_and_seats) {
+      sort_routes_by_date(routes, ascending);
+      break;
+    }
+    printf("Invalid choice.\n");
+    return;
+  case 4:
+    if (allow_date_and_seats) {
+      sort_routes_by_available_seats(routes, ascending);
+      break;
+    }
+    printf("Invalid choice.\n");
+    return;
+  default:
+    printf("Invalid choice.\n");
+    return;
+  }
+
+  // print route table after successfully sorted
+  print_route_table(routes);
 }
