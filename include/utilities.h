@@ -13,5 +13,6 @@ int prompt_int(const char *prompt, int *out);
 int prompt_string(const char *prompt, char *out, size_t size);
 int prompt_double(const char *prompt, double *out);
 int prompt_nonempty_string(const char *prompt, char *out, size_t size);
+int str_equal_ci(const char *a, const char *b);
 
 #endif // !UTILITIES_H

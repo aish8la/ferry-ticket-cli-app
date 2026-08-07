@@ -1,5 +1,6 @@
 #include "utilities.h"
 #include "validation.h"
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -103,4 +104,15 @@ int prompt_nonempty_string(const char *prompt, char *out, size_t size) {
     }
     printf("This field cannot be empty. Please try again.\n");
   }
+}
+
+int str_equal_ci(const char *a, const char *b) {
+  while (*a != '\0' && *b != '\0') {
+    if (tolower((unsigned char)*a) != tolower((unsigned char)*b)) {
+      return 0;
+    }
+    a++;
+    b++;
+  }
+  return *a == '\0' && *b == '\0';
 }
