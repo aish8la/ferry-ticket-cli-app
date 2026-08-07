@@ -25,6 +25,8 @@ static void admin_mode(RouteList *routes, BookingList *bookings);
 static void admin_add_route(RouteList *routes, BookingList *bookings);
 static void admin_update_route(RouteList *routes, BookingList *bookings);
 static void admin_remove_route(RouteList *routes, BookingList *bookings);
+static void admin_view_summary(const RouteList *routes,
+                               const BookingList *bookings);
 
 /* ================= passenger functions ============= */
 
@@ -141,7 +143,7 @@ static void admin_mode(RouteList *routes, BookingList *bookings) {
       print_booking_table(bookings);
       break;
     case 8:
-      // summary
+      admin_view_summary(routes, bookings);
       break;
     case 9:
       return;
@@ -300,6 +302,25 @@ static void admin_remove_route(RouteList *routes, BookingList *bookings) {
   default:
     printf("Could not remove route.\n");
     break;
+  }
+}
+
+static void admin_view_summary(const RouteList *routes,
+                               const BookingList *bookings) {
+  BookingSummary summary;
+
+  compute_booking_summary(routes->count, bookings, &summary);
+
+  printf("---- Booking Summary ----\n");
+  printf("Total ferry routes:      %d\n", summary.total_routes);
+  printf("Total active bookings:   %d\n", summary.total_active_bookings);
+  printf("Total tickets booked:    %d\n", summary.total_tickets_booked);
+  printf("Total revenue collected: %.2f\n", summary.total_revenue);
+  if (summary.most_booked_route_id == -1) {
+    printf("Most-booked route: none yet\n");
+  } else {
+    printf("Most-booked route: ID %d (%d tickets)\n",
+           summary.most_booked_route_id, summary.most_booked_route_tickets);
   }
 }
 
