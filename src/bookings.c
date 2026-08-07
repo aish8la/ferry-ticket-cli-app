@@ -133,3 +133,20 @@ void booking_list_free(BookingList *list) {
   list->count = 0;
   list->capacity = 0;
 }
+
+int count_active_bookings_for_route(const BookingList *list, int route_id) {
+  int i;
+  int count = 0;
+
+  if (list == NULL) {
+    return 0;
+  }
+
+  for (i = 0; i < list->count; i++) {
+    if (list->bookings[i].route_id == route_id &&
+        list->bookings[i].status == BOOKING_STATUS_ACTIVE) {
+      count++;
+    }
+  }
+  return count;
+}

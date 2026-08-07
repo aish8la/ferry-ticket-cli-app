@@ -53,5 +53,6 @@ int book_ticket(BookingList *booking_list, RouteList *route_list,
 int booking_list_append(BookingList *list, const Booking *booking);
 void booking_list_init(BookingList *list);
 void booking_list_free(BookingList *list);
+int count_active_bookings_for_route(const BookingList *list, int route_id);
 
 #endif // !BOOKINGS_H
