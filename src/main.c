@@ -36,6 +36,10 @@ static void passenger_book_ticket(RouteList *routes, BookingList *bookings);
 static void save_all(const RouteList *routes, const BookingList *bookings);
 static void seed_preset_data(RouteList *routes, BookingList *bookings);
 
+/* ===================== shared functions ========================== */
+
+static void search_routes(const RouteList *routes);
+
 /* =================== main ===================== */
 int main(void) {
 
@@ -124,16 +128,15 @@ static void admin_mode(RouteList *routes, BookingList *bookings) {
       admin_remove_route(routes, bookings);
       break;
     case 4:
-      // view all routes
+      print_route_table(routes);
       break;
     case 5:
-      // search route
+      search_routes(routes);
       break;
     case 6:
       // sort routes
       break;
     case 7:
-      // view all bookings
       print_booking_table(bookings);
       break;
     case 8:
@@ -498,4 +501,53 @@ static void seed_preset_data(RouteList *routes, BookingList *bookings) {
               70.00, NULL, &booking_id);
   book_ticket(bookings, routes, "Ibrahim Waheed", "+960 992-6781", 101, 1,
               10.00, NULL, &booking_id);
+}
+
+/* ===================== shared functions ========================== */
+
+static void search_routes(const RouteList *routes) {
+  int choice;
+  int route_id;
+  int index;
+  char destination[ROUTE_STR_LEN];
+  int indices[64];
+  int found;
+  int i;
+
+  printf("Search by: 1) Route ID  2) Destination\n");
+  if (!prompt_int("Choice: ", &choice)) {
+    return;
+  }
+
+  // search and print route by id
+  if (choice == 1) {
+    if (!prompt_int("Route ID: ", &route_id)) {
+      return;
+    }
+    index = search_route_by_id(routes, route_id);
+    if (index == -1) {
+      printf("No route found with ID %d.\n", route_id);
+      return;
+    }
+    print_route_header();
+    print_route_row(&routes->routes[index]);
+    // search and print route by destination
+  } else if (choice == 2) {
+    if (!prompt_nonempty_string("Destination: ", destination,
+                                sizeof(destination))) {
+      return;
+    }
+    found = search_route_by_destination(routes, destination, indices, 64);
+    if (found == 0) {
+      printf("No routes found for destination \"%s\".\n", destination);
+      return;
+    }
+    // print all routes found by destination
+    print_route_header();
+    for (i = 0; i < found && i < 64; i++) {
+      print_route_row(&routes->routes[indices[i]]);
+    }
+  } else {
+    printf("Invalid choice.\n");
+  }
 }
