@@ -65,5 +65,6 @@ void booking_list_free(BookingList *list);
 int count_active_bookings_for_route(const BookingList *list, int route_id);
 void compute_booking_summary(int total_routes, const BookingList *bookings,
                              BookingSummary *out_summary);
+int search_booking_by_id(const BookingList *list, int booking_id);
 
 #endif // !BOOKINGS_H

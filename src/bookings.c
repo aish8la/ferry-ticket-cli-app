@@ -228,3 +228,18 @@ void compute_booking_summary(int total_routes, const BookingList *bookings,
     }
   }
 }
+
+int search_booking_by_id(const BookingList *list, int booking_id) {
+  int i;
+
+  if (list == NULL) {
+    return -1;
+  }
+
+  for (i = 0; i < list->count; i++) {
+    if (list->bookings[i].booking_id == booking_id) {
+      return i;
+    }
+  }
+  return -1;
+}
