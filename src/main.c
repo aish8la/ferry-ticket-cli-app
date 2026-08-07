@@ -33,6 +33,7 @@ static void passenger_book_ticket(RouteList *routes, BookingList *bookings);
 /* ==================== other functions ================== */
 
 static void save_all(const RouteList *routes, const BookingList *bookings);
+static void seed_preset_data(RouteList *routes, BookingList *bookings);
 
 /* =================== main ===================== */
 int main(void) {
@@ -40,13 +41,22 @@ int main(void) {
   RouteList routes;
   BookingList bookings;
   int choice;
+  int routes_load_result;
 
   route_list_init(&routes);
   booking_list_init(&bookings);
 
-  load_routes_from_file(ROUTES_FILE, &routes);
+  routes_load_result = load_routes_from_file(ROUTES_FILE, &routes);
+  load_bookings_from_file(BOOKINGS_FILE, &bookings);
 
   printf("Ferry Ticket Booking & Management System\n");
+
+  if (routes_load_result == FILE_IO_ERR_OPEN) {
+    seed_preset_data(&routes, &bookings);
+    save_all(&routes, &bookings);
+    printf("No existing data found -- loaded sample routes and "
+           "bookings.\n");
+  }
 
   while (1) {
     printf("\n1. Admin Mode\n2. Passenger Mode\n3. Exit\n");
@@ -375,4 +385,22 @@ static void save_all(const RouteList *routes, const BookingList *bookings) {
   if (save_bookings_to_file(BOOKINGS_FILE, bookings) != FILE_IO_OK) {
     printf("Warning: could not save bookings to %s.\n", BOOKINGS_FILE);
   }
+}
+
+static void seed_preset_data(RouteList *routes, BookingList *bookings) {
+  int booking_id;
+
+  add_route(routes, 101, "Male", "Hulhumale", "2026-08-05", "07:00", 10.00,
+            150);
+  add_route(routes, 102, "Male", "Villimale", "2026-08-05", "08:00", 10.00,
+            120);
+  add_route(routes, 103, "Male", "Maafushi", "2026-08-05", "14:30", 35.00, 100);
+  add_route(routes, 104, "Male", "Guraidhoo", "2026-08-06", "15:15", 35.00, 80);
+  add_route(routes, 105, "Male", "Thulusdhoo", "2026-08-06", "09:30", 20.00,
+            90);
+
+  book_ticket(bookings, routes, "Aishath Nasheed", "+960 771-2345", 103, 2,
+              70.00, NULL, &booking_id);
+  book_ticket(bookings, routes, "Ibrahim Waheed", "+960 992-6781", 101, 1,
+              10.00, NULL, &booking_id);
 }
