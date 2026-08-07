@@ -24,6 +24,7 @@ static void print_booking_header(void);
 static void admin_mode(RouteList *routes, BookingList *bookings);
 static void admin_add_route(RouteList *routes, BookingList *bookings);
 static void admin_update_route(RouteList *routes, BookingList *bookings);
+static void admin_remove_route(RouteList *routes, BookingList *bookings);
 
 /* ================= passenger functions ============= */
 
@@ -120,7 +121,7 @@ static void admin_mode(RouteList *routes, BookingList *bookings) {
       admin_update_route(routes, bookings);
       break;
     case 3:
-      // remove rout
+      admin_remove_route(routes, bookings);
       break;
     case 4:
       // view all routes
@@ -264,6 +265,36 @@ static void admin_update_route(RouteList *routes, BookingList *bookings) {
     break;
   default:
     printf("Could not update route.\n");
+    break;
+  }
+}
+
+static void admin_remove_route(RouteList *routes, BookingList *bookings) {
+  int route_id;
+  int active_count;
+  int result;
+
+  if (!prompt_int("Route ID to remove: ", &route_id))
+    return;
+
+  active_count = count_active_bookings_for_route(bookings, route_id);
+  result = remove_route(routes, route_id, active_count > 0);
+
+  switch (result) {
+  case ROUTE_OK:
+    printf("Route %d removed successfully.\n", route_id);
+    save_all(routes, bookings);
+    break;
+  case ROUTE_ERR_NOT_FOUND:
+    printf("No route found with ID %d.\n", route_id);
+    break;
+  case ROUTE_ERR_HAS_ACTIVE_BOOKINGS:
+    printf("Cannot remove route %d: it has %d active booking(s). "
+           "Cancel those bookings first.\n",
+           route_id, active_count);
+    break;
+  default:
+    printf("Could not remove route.\n");
     break;
   }
 }
