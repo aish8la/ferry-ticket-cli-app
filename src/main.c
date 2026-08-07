@@ -32,6 +32,7 @@ static void admin_view_summary(const RouteList *routes,
 
 static void passenger_mode(RouteList *routes, BookingList *bookings);
 static void passenger_book_ticket(RouteList *routes, BookingList *bookings);
+static void passenger_view_booking(const BookingList *bookings);
 
 /* ==================== other functions ================== */
 
@@ -347,16 +348,16 @@ static void passenger_mode(RouteList *routes, BookingList *bookings) {
       print_route_table(routes);
       break;
     case 2:
-      // search for route
+      search_routes(routes);
       break;
     case 3:
-      // sort routes
+      sort_routes(routes, 0);
       break;
     case 4:
       passenger_book_ticket(routes, bookings);
       break;
     case 5:
-      // view booking
+      passenger_view_booking(bookings);
       break;
     case 6:
       // cancel booking
@@ -436,6 +437,23 @@ static void passenger_book_ticket(RouteList *routes, BookingList *bookings) {
     printf("Could not complete the booking.\n");
     break;
   }
+}
+
+static void passenger_view_booking(const BookingList *bookings) {
+  int booking_id;
+  int index;
+
+  if (!prompt_int("Booking ID: ", &booking_id))
+    return;
+
+  index = search_booking_by_id(bookings, booking_id);
+  if (index == -1) {
+    printf("No booking found with ID %d.\n", booking_id);
+    return;
+  }
+
+  print_booking_header();
+  print_booking_row(&bookings->bookings[index]);
 }
 
 /* ================== display helpers ================= */
