@@ -152,3 +152,43 @@ void route_list_free(RouteList *list) {
   list->count = 0;
   list->capacity = 0;
 }
+
+int update_route(RouteList *list, int route_id, const char *departure_island,
+                 const char *destination_island, const char *departure_date,
+                 const char *departure_time, double price, int max_capacity) {
+  int index;
+  int booked_seats;
+  FerryRoute *route;
+
+  if (list == NULL || !is_non_empty(destination_island) ||
+      !is_non_empty(departure_island) || !is_positive_double(price) ||
+      !is_positive_int(max_capacity)) {
+    return ROUTE_ERR_INVALID_INPUT;
+  }
+
+  index = search_route_by_id(list, route_id);
+  if (index == -1) {
+    return ROUTE_ERR_NOT_FOUND;
+  }
+
+  // reference to the route struct in the list
+  route = &list->routes[index];
+  booked_seats = route->max_capacity - route->available_seats;
+  // check to ensure that max_capacity cannot be modified to be lower than
+  // already booked seats
+  if (max_capacity < booked_seats) {
+    return ROUTE_ERR_INVALID_INPUT;
+  }
+
+  copy_str(route->departure_island, departure_island, ROUTE_STR_LEN);
+  copy_str(route->destination_island, destination_island, ROUTE_STR_LEN);
+  copy_str(route->departure_date, departure_date != NULL ? departure_date : "",
+           ROUTE_STR_LEN);
+  copy_str(route->departure_time, departure_time != NULL ? departure_time : "",
+           ROUTE_STR_LEN);
+  route->price = price;
+  route->max_capacity = max_capacity;
+  route->available_seats = max_capacity - booked_seats;
+
+  return ROUTE_OK;
+}

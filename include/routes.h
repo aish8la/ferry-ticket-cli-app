@@ -44,5 +44,8 @@ void route_deduct_seats(FerryRoute *route, int tickets);
 FerryRoute *route_list_get_by_id(RouteList *list, int route_id);
 void route_list_init(RouteList *list);
 void route_list_free(RouteList *list);
+int update_route(RouteList *list, int route_id, const char *departure_island,
+                 const char *destination_island, const char *departure_date,
+                 const char *departure_time, double price, int max_capacity);
 
 #endif // !ROUTES_H
