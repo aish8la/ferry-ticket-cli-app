@@ -245,100 +245,102 @@ int search_route_by_destination(const RouteList *list, const char *destination,
   return found;
 }
 
-// qsort comparison functions
-static int compare_price_ascending(const void *a, const void *b) {
-  const FerryRoute *route_a = a;
-  const FerryRoute *route_b = b;
-
-  // comparision function returns -1 if a should have a lower index
-  if (route_a->price < route_b->price)
-    return -1;
-  // comparison function return 1 if a should have higher index
-  if (route_a->price > route_b->price)
-    return 1;
-
-  // return zero if no change
-  return 0;
+// helper for bubble sort
+// swaps the routes
+static void swap_routes(FerryRoute *a, FerryRoute *b) {
+  FerryRoute tmp = *a;
+  *a = *b;
+  *b = tmp;
 }
 
-static int compare_price_descending(const void *a, const void *b) {
-  // swaps a and b passed to the comparison function so sorting is reversed
-  return compare_price_ascending(b, a);
-}
-
-static int compare_destination_ascending(const void *a, const void *b) {
-  const FerryRoute *route_a = a;
-  const FerryRoute *route_b = b;
-
-  return strcmp(route_a->destination_island, route_b->destination_island);
-}
-
-static int compare_destination_descending(const void *a, const void *b) {
-  return compare_destination_ascending(b, a);
-}
-
-static int compare_date_ascending(const void *a, const void *b) {
-  const FerryRoute *route_a = a;
-  const FerryRoute *route_b = b;
-
-  return strcmp(route_a->departure_date, route_b->departure_date);
-}
-
-static int compare_date_descending(const void *a, const void *b) {
-  return compare_date_ascending(b, a);
-}
-
-static int compare_available_seats_ascending(const void *a, const void *b) {
-  const FerryRoute *route_a = a;
-  const FerryRoute *route_b = b;
-
-  if (route_a->available_seats < route_b->available_seats)
-    return -1;
-  if (route_a->available_seats > route_b->available_seats)
-    return 1;
-
-  return 0;
-}
-
-static int compare_available_seats_descending(const void *a, const void *b) {
-  return compare_available_seats_ascending(b, a);
-}
-
-// wrappers for the qsort to avoid null list errors
+// sort functions implement bubble sort algorithm
 void sort_routes_by_price(RouteList *list, int ascending) {
-  if (list == NULL)
-    return;
+  int i, j;
+  int should_swap;
 
-  // qsort function used to sort value and the comparision function depending on
-  // the truthy value of ascending
-  qsort(list->routes, list->count, sizeof(FerryRoute),
-        ascending ? compare_price_ascending : compare_price_descending);
+  if (list == NULL) {
+    return;
+  }
+
+  // outer loops runs for less than total count - 1 amount of times because once
+  // count - 1 number of elements are placed correctly the last one should also
+  // be in the correct place
+  for (i = 0; i < list->count - 1; i++) {
+    // loops and checks each element against the next element and decides
+    // whether to swap or not until it reaches the second last element - the
+    // number of elements already sorted
+    for (j = 0; j < list->count - 1 - i; j++) {
+      should_swap = ascending
+                        ? (list->routes[j].price > list->routes[j + 1].price)
+                        : (list->routes[j].price < list->routes[j + 1].price);
+      if (should_swap) {
+        swap_routes(&list->routes[j], &list->routes[j + 1]);
+      }
+    }
+  }
 }
 
 void sort_routes_by_destination(RouteList *list, int ascending) {
-  if (list == NULL)
-    return;
+  int i, j;
+  int cmp;
+  int should_swap;
 
-  qsort(list->routes, list->count, sizeof(FerryRoute),
-        ascending ? compare_destination_ascending
-                  : compare_destination_descending);
+  if (list == NULL) {
+    return;
+  }
+
+  for (i = 0; i < list->count - 1; i++) {
+    for (j = 0; j < list->count - 1 - i; j++) {
+      cmp = strcmp(list->routes[j].destination_island,
+                   list->routes[j + 1].destination_island);
+      should_swap = ascending ? (cmp > 0) : (cmp < 0);
+      if (should_swap) {
+        swap_routes(&list->routes[j], &list->routes[j + 1]);
+      }
+    }
+  }
 }
 
 void sort_routes_by_date(RouteList *list, int ascending) {
-  if (list == NULL)
-    return;
+  int i, j;
+  int cmp;
+  int should_swap;
 
-  qsort(list->routes, list->count, sizeof(FerryRoute),
-        ascending ? compare_date_ascending : compare_date_descending);
+  if (list == NULL) {
+    return;
+  }
+
+  for (i = 0; i < list->count - 1; i++) {
+    for (j = 0; j < list->count - 1 - i; j++) {
+      cmp = strcmp(list->routes[j].departure_date,
+                   list->routes[j + 1].departure_date);
+      should_swap = ascending ? (cmp > 0) : (cmp < 0);
+      if (should_swap) {
+        swap_routes(&list->routes[j], &list->routes[j + 1]);
+      }
+    }
+  }
 }
 
 void sort_routes_by_available_seats(RouteList *list, int ascending) {
-  if (list == NULL)
-    return;
+  int i, j;
+  int should_swap;
 
-  qsort(list->routes, list->count, sizeof(FerryRoute),
-        ascending ? compare_available_seats_ascending
-                  : compare_available_seats_descending);
+  if (list == NULL) {
+    return;
+  }
+
+  for (i = 0; i < list->count - 1; i++) {
+    for (j = 0; j < list->count - 1 - i; j++) {
+      should_swap = ascending ? (list->routes[j].available_seats >
+                                 list->routes[j + 1].available_seats)
+                              : (list->routes[j].available_seats <
+                                 list->routes[j + 1].available_seats);
+      if (should_swap) {
+        swap_routes(&list->routes[j], &list->routes[j + 1]);
+      }
+    }
+  }
 }
 
 void route_restore_seats(FerryRoute *route, int tickets) {
